@@ -3,6 +3,16 @@
 This repo hosts the eligibility application POC UI, built using NodeJS, Vanilla JavaScript, and ExpressJS to serve web pages.
 It uses docker containers for re-usable deployments and to streamline the develop, test, deploy, maintain lifecycle.
 
+## Environment variables
+
+|      Variable Name      |                Variable Description                |                                                  Example                                                   |
+| :---------------------: | :------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
+|          PORT           |              NodeJS application port               |                                             `export PORT=3000`                                             |
+| ELIGIBILITY_SERVICE_URL | Spring Eligibility Service URL (includes endpoint) |                  `export ELIGIBILITY_SERVICE_URL=http://192.168.56.104:8080/getBenefits`                   |
+|  MONGO_CONNECTION_URI   |          Mongo database connection string          | `export MONGO_CONNECTION_URI=mongodb://admin:admin@mongo-eligibility:27017/eligibilityDB?authSource=admin` |
+|   POLICY_SERVICE_URL    |   Spring Policy Service URL (includes endpoint)    |                       `export POLICY_SERVICE_URL=http://localhost:8080/getPolicies`                        |
+| ENROLLMENT_SERVICE_URL  | Spring Enrollment Service URL (includes endpoint)  |                   `export ENROLLMENT_SERVICE_URL=http://localhost:8080/createEnrollment`                   |
+
 ## Setup (Docker)
 
 1. Ensure docker is running and note down the host and port information
