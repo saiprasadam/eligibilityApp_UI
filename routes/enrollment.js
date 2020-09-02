@@ -47,8 +47,6 @@ function getSubscriber(req, benefits, dependents) {
         subscriberId: req.body.subscriberId,
         name: name,
         address: address,
-        email: req.body.email,
-        password: req.body.password,
         dateOfBirth: req.body.dateofbirth,
         benefits: formatArray(benefits),
         dependents: formatArray(dependents)
@@ -60,25 +58,30 @@ function formatArray(object) {
 }
 
 function getDependents(req, benefits) {
-    // TODO: Change for mulitple dependents
-    var dependentName = {
-        firstName: req.body.dependentfirstname,
-        lastName: req.body.dependentlastname
-    };
-    var dependentAddress = {
-        street: req.body.dependentstreet,
-        city: req.body.dependentcity,
-        state: req.body.dependentstate,
-        country: req.body.dependentcountry
-    };
+    let dependents = JSON.parse(req.body.dependents);
+    let result = [];
+    for (let dependent of dependents) {
+        var dependentName = {
+            firstName: dependent.dependentfirstname,
+            lastName: dependent.dependentlastname
+        };
+        var dependentAddress = {
+            street: dependent.dependentstreet,
+            city: dependent.dependentcity,
+            state: dependent.dependentstate,
+            country: dependent.dependentcountry
+        };
 
-    return {
-        dependentId: req.body.dependentId,
-        dependentName: dependentName,
-        dependentAddress: dependentAddress,
-        dependentDateOfBirth: req.body.dependentdateofbirth,
-        dependentBenefits: formatArray(benefits)
-    };
+        let newDependent = {
+            dependentId: dependent.dependentId,
+            dependentName: dependentName,
+            dependentAddress: dependentAddress,
+            dependentDateOfBirth: dependent.dependentdateofbirth,
+            dependentBenefits: formatArray(benefits)
+        }
+        result.push(newDependent);
+    }
+    return result;
 }
 
 function extractRelevantBenefits(selectedBenefits, allBenefits) {

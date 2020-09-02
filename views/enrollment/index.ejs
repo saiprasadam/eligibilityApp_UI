@@ -10,22 +10,27 @@
 
 <body>
     <%- include("../helpers/navigation.ejs") %>
-    <div class="container">
-        <div id="enrollment-response" data-success="<%= data.enrollMessage %>"
-            data-failure="<%= data.failedEnrollMessage %>"></div>
-        <%- include("successModal.ejs") %>
-        <h1>Please fill data in the form below:</h1>
-        <hr>
-        <form method="POST" action="/enrollment">
-            <div id="subscriber-info">
-                <%- include("./subscriberForm.ejs") %>
-            </div>
-            <div id="dependentInfo" class="">
-                <%- include("dependentForm.ejs") %>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-    </div>
+    <main role="main">
+        <div class="container">
+            <div id="enrollment-response" data-success="<%= data.enrollMessage %>"
+                data-failure="<%= data.failedEnrollMessage %>"></div>
+            <%- include("successModal.ejs") %>
+            <h1 class="mt-2">Enroll New Subscriber</h1>
+            <hr>
+            <form class="pt-2" method="POST" action="/enrollment" id="register-form">
+                <div id="subscriber-info">
+                    <%- include("./subscriberForm.ejs") %>
+                </div>
+                <div id="dependent-info" class="pb-2">
+                    <%- include("dependentTable.ejs") %>
+                    <%- include("dependentForm.ejs") %>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            <hr>
+        </div>
+        <%- include("../helpers/footer.ejs") %>
+    </main>
     <script src="javascripts/enrollment/index.js"></script>
 </body>
 
