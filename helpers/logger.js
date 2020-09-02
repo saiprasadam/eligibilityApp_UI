@@ -1,7 +1,8 @@
 const winston = require('winston');
+const { LOG_LEVEL } = require("./constants");
 
 const logger = winston.createLogger({
-    level: 'info',
+    level: LOG_LEVEL,
     format: winston.format.json(),
     defaultMeta: { service: 'enrollments-ui-service' },
     transports: [

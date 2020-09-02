@@ -11,7 +11,14 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\bin\\www"
+            "program": "${workspaceFolder}\\bin\\www",
+            "env": {
+                "POLICY_SERVICE_URL": "http://192.168.56.104:8080/getAllPolicies",
+                "ELIGIBILITY_SERVICE_URL": "http://192.168.56.104:8080/getBenefits",
+                "LOG_LEVEL": "info",
+                "ENROLLMENT_SERVICE_URL": "http://192.168.56.104:8080/enrollment",
+                "POLICY_DETAILS_URL": "http://192.168.56.104:8080/getPolicyDetails"
+            }
         }
     ]
 }
