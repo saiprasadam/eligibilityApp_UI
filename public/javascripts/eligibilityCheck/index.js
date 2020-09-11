@@ -9,6 +9,9 @@ $(document).ready(function () {
     successArea.classList.remove("d-none");
     successArea.textContent = "";
 });
+function onCancelClicked() {
+    document.getElementById("eligibility-check-form").reset();
+  }
 
 function addFieldValidationBorder(tag) {
     document.querySelector(tag).classList.add("border", "border-danger");

@@ -22,9 +22,14 @@ $("document").ready(function () {
         $("<input />").attr("type", "hidden")
             .attr("name", "dependents")
             .attr("value", JSON.stringify(allDependents))
-            .appendTo("#register-form");
+            .appendTo("#register-form");             
+        if ($('#subscriber-policy-div.checkbox-group.required :checkbox:checked').length <= 0) {
+            alert("At least 1 policy is required!");
+            return false;
+        }
         return true;
     });
+   
 });
 
 function renderDependentsTable() {
@@ -47,14 +52,34 @@ function renderDependentsTable() {
 
 function onDependentAdd() {
     let dependent = {};
+
     for (let element of $("#dependent-modal :input")) {
+
         if (element.name && element.value) {
-            dependent[element.name] = element.value;
+            if (element.type == "checkbox") {
+                if (element.checked) {
+
+                    if (Array.isArray(dependent[element.name])) {
+                        dependent[element.name].push(element.value);
+                    }
+                    else {
+                        dependent[element.name] = [element.value];
+                    }
+                }
+            } else {
+                dependent[element.name] = element.value;
+            }
         }
     }
-    allDependents.push(dependent);
-    $("#dependent-modal").modal("hide");
-    renderDependentsTable();
+    dependent.dependentrelationship = $("#dependentrelationship option:selected").text();
+    if (dependent.dependentpolicy && dependent.dependentrelationship != "Select a value" && dependent.dependentrelationship && dependent.dependentcountry && dependent.dependentstate && dependent.dependentcity && dependent.dependentstreet && dependent.dependentdateofbirth && dependent.dependentfirstname && dependent.dependentlastname) {
+        allDependents.push(dependent);
+        $("#dependent-modal").modal("hide");
+        renderDependentsTable();
+    } else {
+        alert("All fields are required!!");
+    }
+
 }
 
 function getTagValue(tagOrSelector) {
@@ -62,5 +87,11 @@ function getTagValue(tagOrSelector) {
 }
 
 function clearDependentFormContents() {
-    $("#dependent-modal :input").val("");
+    $('#dependent-modal').find('input[type="text"]').val('');
+    $('#dependent-modal').find('input[type="date"]').val('YYYY-MM-DD');
+    $("#policy-div").find("input:checkbox").prop('checked', false);
+    $('#dependentrelationship').prop('selectedIndex', 0);
+    $('#countryCode').prop('selectedIndex', 0);
+    $('#stateCode').prop('selectedIndex', 0);
+    $('#cityCode').prop('selectedIndex', 0);
 }
