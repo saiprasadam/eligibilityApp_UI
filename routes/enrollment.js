@@ -2,9 +2,14 @@ const express = require("express");
 let router = express.Router();
 const axios = require("axios").default;
 const url = require("url");
+//const date = require("date");
+
+
 const { POLICY_SERVICE_URL, ENROLLMENT_SERVICE_URL } = require("../helpers/constants");
 const logger = require("../helpers/logger");
 const { format } = require("path");
+
+
 
 router.get("/", function (req, res, next) {
     // Request policy data from Spring
@@ -30,24 +35,36 @@ router.get("/", function (req, res, next) {
             return res.render("enrollment/index.ejs", { data: data });
         });
 });
-
-function getSubscriber(req, benefits, dependents) {
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+    return [year, month, day].join('-');
+}
+function getSubscriber(req, allBenefits, dependents) {
     let name = {
         firstName: req.body.firstname,
         lastName: req.body.lastname
     };
+    var dateOfBirth = formatDate(req.body.dateofbirth);
+   
     var address = {
         street: req.body.street,
         city: req.body.city,
         state: req.body.state,
         country: req.body.country
     };
-
+    logger.info(address.city);
+    let benefits = extractRelevantBenefits(formatArray(req.body.policy), formatArray(allBenefits));
     return {
-        subscriberId: req.body.subscriberId,
         name: name,
         address: address,
-        dateOfBirth: req.body.dateofbirth,
+        dateOfBirth: dateOfBirth,
         benefits: formatArray(benefits),
         dependents: formatArray(dependents)
     };
@@ -61,23 +78,24 @@ function getDependents(req, benefits) {
     let dependents = JSON.parse(req.body.dependents);
     let result = [];
     for (let dependent of dependents) {
-        var dependentName = {
+        let dependentName = {
             firstName: dependent.dependentfirstname,
             lastName: dependent.dependentlastname
         };
-        var dependentAddress = {
+        let dependentAddress = {
             street: dependent.dependentstreet,
             city: dependent.dependentcity,
             state: dependent.dependentstate,
             country: dependent.dependentcountry
         };
-
+        let dependentRelationship = dependent.dependentrelationship;
+        let selectedPolicies = extractRelevantBenefits(formatArray(dependent.dependentpolicy), benefits);
         let newDependent = {
-            dependentId: dependent.dependentId,
             dependentName: dependentName,
+            dependentRelation: dependentRelationship,
             dependentAddress: dependentAddress,
-            dependentDateOfBirth: dependent.dependentdateofbirth,
-            dependentBenefits: formatArray(benefits)
+            dependentDateOfBirth: formatDate(dependent.dependentdateofbirth),
+            dependentBenefits: selectedPolicies
         }
         result.push(newDependent);
     }
@@ -88,17 +106,27 @@ function extractRelevantBenefits(selectedBenefits, allBenefits) {
     // Filter allBenefits based on IDs returned from selectedBenefits
     // [1] = selected, allBenefits = [{policyId: 1, policyName: "1"}, {polciyId: 2, policyName: "2"}]
     // Returns => [{policyId: 1, policyName: "1"}]
-    return allBenefits.filter(benefit => selectedBenefits.includes(benefit.policyId));
+    let newBenefits = allBenefits.filter(benefit => {
+        if (selectedBenefits.includes(benefit.policyId)) {
+            benefit.currentEligibleAmount = benefit.claimableAmount;
+            benefit.totalEligibleAmount = benefit.claimableAmount;
+            benefit.claimedAmount = 0;
+            return true;
+        }
+        return false;
+    });
+    return newBenefits;
 }
 
 router.post("/", function (req, res, next) {
     logger.info("Requesting Policies from: " + POLICY_SERVICE_URL);
     return axios.get(POLICY_SERVICE_URL).then(function (response) {
         // Extract the selected policy information
-        let benefits = extractRelevantBenefits(formatArray(req.body.policy), formatArray(response.data));
-        let dependents = getDependents(req, benefits);
-        let subscribers = getSubscriber(req, benefits, dependents);
 
+        let dependents = getDependents(req, response.data);
+        let subscribers = getSubscriber(req, response.data, dependents);
+
+        logger.info(subscribers);
         logger.info("Creating subscriber with ID: " + subscribers.subscriberId);
         logger.info("Endpoint: " + ENROLLMENT_SERVICE_URL);
         return axios({
@@ -107,7 +135,7 @@ router.post("/", function (req, res, next) {
             data: subscribers
         }).then((enrollmentResponse) => {
             logger.info("Response status: " + enrollmentResponse.status);
-            let message = enrollmentResponse.data ? "success" : "failure";
+            let message = enrollmentResponse.data ? "Registration Successful" : "Registration Failure";
             let redirectUrl = url.format({
                 pathname: "/enrollment",
                 query: {
@@ -120,6 +148,10 @@ router.post("/", function (req, res, next) {
             return res.redirect(getEnrollmentRedirectMessage());
         });
 
+    }).catch(function (getAllPolicyError) {
+        logger.error("Unable to fetch all policies:");
+        logger.error(getAllPolicyError);
+        return res.redirect(getEnrollmentRedirectMessage());
     });
 });
 
