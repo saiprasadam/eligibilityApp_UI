@@ -28,7 +28,7 @@ router.post('/validate', (req, res) => {
         req.session.userid = data.id;
         if (data.name == req.body.username && data.password == req.body.password) {
             logger.info("Successfully authenticated username: " + data.name);
-            res.redirect('/home');
+            res.redirect('/oauth');
         }
         else {
             logger.info("Unable to log in username: " + data.name);

@@ -9,6 +9,7 @@ const { SECRET } = require('./helpers/constants');
 
 var loginRouter = require('./routes/login');
 var homeRouter = require('./routes/home');
+var oauthRouter = require('./routes/oauth');
 var eligibilityRouter = require("./routes/eligibility");
 var enrollmentRouter = require("./routes/enrollment");
 var app = express();
@@ -32,6 +33,8 @@ app.use(session({
 
 app.use('/', loginRouter);
 app.use('/home', homeRouter);
+app.use('/oauth', oauthRouter);
+app.use('/generateToken', oauthRouter);
 app.use("/eligibility", eligibilityRouter);
 app.use("/enrollment", enrollmentRouter);
 
