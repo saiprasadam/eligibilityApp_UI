@@ -125,14 +125,18 @@ router.post("/", function (req, res, next) {
 
         let dependents = getDependents(req, response.data);
         let subscribers = getSubscriber(req, response.data, dependents);
-
+        var accesstoken='Bearer'+" "+req.session.token;
+        var header= {
+            'Content-Type': 'application/json',
+            'Authorization': accesstoken
+        };
         logger.info(subscribers);
         logger.info("Creating subscriber with ID: " + subscribers.subscriberId);
         logger.info("Endpoint: " + ENROLLMENT_SERVICE_URL);
         return axios({
             method: 'POST',
             url: ENROLLMENT_SERVICE_URL,
-            data: subscribers
+            data: subscribers,headers:header
         }).then((enrollmentResponse) => {
             logger.info("Response status: " + enrollmentResponse.status);
             let message = enrollmentResponse.data ? "Registration Successful" : "Registration Failure";

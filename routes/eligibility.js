@@ -9,6 +9,12 @@ router.get("/", function (req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
+    console.log(req.session.token+"**************");
+    var accesstoken='Bearer'+" "+req.session.token;
+    var header11= {
+        'Content-Type': 'application/json',
+        'Authorization': accesstoken
+    };
     let subscriberId = req.body.subscriberId;
     let policyId = req.body.policyId;
     let dependentId = req.body.dependentId;
@@ -18,7 +24,10 @@ router.post("/", function (req, res, next) {
         logger.error("Incorrect values received from UI. SubscriberID, PolicyID, DependentID not found.");
         return res.send({ code: 400, message: errorMessage });
     }
-    return axios.get(ELIGIBILITY_SERVICE_URL, { params: { subscriberId: subscriberId, plan: policyId, uniqueId: dependentId } })
+  //  return axios.get(ELIGIBILITY_SERVICE_URL, { params: { subscriberId: subscriberId, plan: policyId, uniqueId: dependentId } })
+  let url = ELIGIBILITY_SERVICE_URL + `?subscriberId=${req.body.subscriberId}&dependentId=${req.body.dependentId}&policyId=${req.body.policyId}`;
+  return axios.get(url,
+    {headers:header11})
         .then(function (success) {
             let isEligible = success.data.eligible;
             let message = isEligible ? `Subscriber: ${success.data.subscriberId} is eligibile` :
