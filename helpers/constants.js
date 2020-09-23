@@ -4,6 +4,7 @@ const POLICY_DETAILS_URL = process.env.POLICY_DETAILS_URL || "http://localhost:8
 const ENROLLMENT_SERVICE_URL = process.env.ENROLLMENT_SERVICE_URL || "http://localhost:8210/enrollment";
 const LOGIN_SERVICE_URL = process.env.LOGIN_SERVICE_URL || "http://localhost:8210/getUser";
 const OAUTH_SERVICE_URL = process.env.LOGIN_SERVICE_URL_Auth || "http://localhost:8210/oauth/token";
+const TEMPORARY_PSWD_URL = process.env.TEMPORARY_PSWD_URL || "http://localhost:8210/sendTemporaryPassword";
 const LOG_LEVEL = process.env.LOG_LEVEL || "info";
 const SECRET =process.env.SECRET || "secret";
 const token = process.env.token || "token";
