@@ -19,7 +19,10 @@
                 "LOG_LEVEL": "info",
                 "ENROLLMENT_SERVICE_URL": "http://localhost:8080/enrollment",
                 "POLICY_DETAILS_URL": "http://localhost:8080/getPolicyDetails",
-                "LOGIN_SERVICE_URL" : "http://localhost:8080/getUser"
+                "LOGIN_SERVICE_URL" : "http://localhost:8080/getUser",
+                "OAUTH_SERVICE_URL" : "http://localhost:8210/oauth/token",
+                "TEMPORARY_PSWD_URL" : "http://localhost:8210/sendTemporaryPassword",
+                "TOKEN_SERVICE_URL" : "http://localhost:8210/tokens"
             }
         },
         {
@@ -38,6 +41,9 @@
                 "ENROLLMENT_SERVICE_URL": "http://192.168.56.104:8080/enrollment",
                 "POLICY_DETAILS_URL": "http://192.168.56.104:8080/getPolicyDetails",
                 "LOGIN_SERVICE_URL" : "http://192.168.56.104:8080/getUser"
+                "OAUTH_SERVICE_URL" : "http:///192.168.56.104:8080/oauth/token",
+                "TEMPORARY_PSWD_URL" : "http:///192.168.56.104:8080/sendTemporaryPassword",
+                "TOKEN_SERVICE_URL" : "http:///192.168.56.104:8080/tokens"
             }
         }
     ]
